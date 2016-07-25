@@ -8,7 +8,7 @@ ERROR_LOG="scan_log/log_error"
 TODAY_RECORD="scan_log/$(date +%y_%m_%d_DNS_record)"
 
 # 从alexa下载每日更新的全球前1M域名
-rm top1m.zip top-1m.csv
+rm top-1m.csv
 wget $ALEXA_DOWNLOAD_URL -O top1m.zip 2> /dev/null
 unzip top1m.zip
 
