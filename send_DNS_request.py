@@ -18,7 +18,7 @@ CNAME = 5
 
 def get_sport_and_id(seed):
     high_bit, low_bit = divmod(seed, 2**16)
-    return high_bit << 12, low_bit
+    return (high_bit << 12) + 1000, low_bit
 
 
 count = 1

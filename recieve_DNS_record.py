@@ -31,7 +31,7 @@ def store(pkg):
                 record = "{count} {order} {address} {domain} {name}\n".format(
                     count=count,
                     order=order,
-                    address=pkg[DNSRR][i].rdata,
+                    address=pkg[DNSRR][i].rdata.strip().rstrip("."),
                     domain=pkg[DNSQR].qname.rstrip("."),
                     name=pkg[DNSRR][i].rrname.rstrip("."),
                 )
