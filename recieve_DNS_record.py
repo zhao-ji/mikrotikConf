@@ -14,12 +14,12 @@ CNAME = 5
 
 
 def extract_count_and_order(ip_id, dns_id):
-    return ip_id >> 12 << 16 + dns_id, ip_id % 2 ** 12
+    return (ip_id >> 12 << 16) + dns_id, ip_id % 2 ** 12
 
 
 def get_sport_and_id(count, order):
-    high_bit, low_bit = divmod(count, 2 << 16)
-    return high_bit << 12 + order, low_bit
+    high_bit, low_bit = divmod(count, 1 << 16)
+    return (high_bit << 12) + order, low_bit
 
 
 def store(pkg):
