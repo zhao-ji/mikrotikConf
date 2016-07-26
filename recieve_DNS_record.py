@@ -27,16 +27,13 @@ def store(pkg):
         # 是DNS 是DNS回答 有CNAME回答内容
         count, order = extract_count_and_order(pkg[UDP].dport, pkg[DNS].id)
         for i in range(pkg[DNS].ancount):
-            if pkg[DNSRR][i].type == CNAME:
+            if pkg[DNSRR][i].type == CNAME and order <= 5:
                 record = "{count} {order} {address}\n".format(
                     count=count,
                     order=order,
                     address=pkg[DNSRR][i].rdata.strip().rstrip("."),
                 )
                 stdout.write(record)
-
-                if count > 10:
-                    continue
 
                 ret_data = pkg[DNSRR][i].rdata
 
