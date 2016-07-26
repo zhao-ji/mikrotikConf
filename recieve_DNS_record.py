@@ -34,6 +34,10 @@ def store(pkg):
                     address=pkg[DNSRR][i].rdata.strip().rstrip("."),
                 )
                 stdout.write(record)
+
+                if count > 10:
+                    continue
+
                 ret_data = pkg[DNSRR][i].rdata
 
                 sport, dns_id = get_sport_and_id(count, order+1)
