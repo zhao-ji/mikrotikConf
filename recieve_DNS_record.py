@@ -13,27 +13,25 @@ from scapy.all import IP, UDP, DNS, DNSQR, DNSRR
 CNAME = 5
 
 
-def extract_count_and_order(ip_id, dns_id):
-    return (ip_id >> 12 << 16) + dns_id, ip_id % 2 ** 12
+def extract_count_and_order(ip_port, dns_id):
+    return ((ip_port >> 8) % (1 << 4) << 16) + dns_id, ip_port % 2 ** 8
 
 
 def get_sport_and_id(count, order):
     high_bit, low_bit = divmod(count, 1 << 16)
-    return (high_bit << 12) + order, low_bit
+    return (0b1111 << 12) + (high_bit << 8) + order, low_bit
 
 
 def store(pkg):
     if pkg.haslayer(DNS) and pkg.haslayer(DNSRR) and pkg[DNS].ancount:
         # 是DNS 是DNS回答 有CNAME回答内容
-        count, order = extract_count_and_order(pkg[IP].id, pkg[DNS].id)
+        count, order = extract_count_and_order(pkg[UDP].dport, pkg[DNS].id)
         for i in range(pkg[DNS].ancount):
             if pkg[DNSRR][i].type == CNAME:
-                record = "{count} {order} {address} {domain} {name}\n".format(
+                record = "{count} {order} {address}\n".format(
                     count=count,
                     order=order,
                     address=pkg[DNSRR][i].rdata.strip().rstrip("."),
-                    domain=pkg[DNSQR].qname.rstrip("."),
-                    name=pkg[DNSRR][i].rrname.rstrip("."),
                 )
                 stdout.write(record)
                 ret_data = pkg[DNSRR][i].rdata
@@ -56,5 +54,5 @@ def store(pkg):
                 send([dns_query, dns_query, dns_query], verbose=0)
 
 if __name__ == "__main__":
-    filter_string = "src host 8.8.8.8 and udp src port 53"
+    filter_string = "src host 8.8.8.8 and udp[0:2] == 53 and udp[2:2] > 61440"
     sniff(store=0, filter=filter_string, prn=store)

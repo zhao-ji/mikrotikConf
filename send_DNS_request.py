@@ -16,16 +16,15 @@ from scapy.all import IP, UDP, DNS, DNSQR
 CNAME = 5
 
 
-def get_sport_and_id(seed):
-    high_bit, low_bit = divmod(seed, 2**16)
-    return (high_bit << 12) + 1000, low_bit
-
+def get_sport_and_id(count, order):
+    high_bit, low_bit = divmod(count, 1 << 16)
+    return 61440 + (high_bit << 8) + order, low_bit
 
 count = 1
 
 if __name__ == "__main__":
     for line in stdin:
-        sport, dns_id = get_sport_and_id(seed=count)
+        sport, dns_id = get_sport_and_id(count, 1)
         dns_query = IP(
             dst="8.8.8.8",
         )/UDP(
